@@ -58,26 +58,29 @@
                     {{ csrf_field() }}
                     <div id="form-add-nik" class="form-group">
                         <div class="row">
-                            <div class="col-md-5 col-xs-12">
+                            <div class="col-md-8 col-xs-12">
                                 <label for="">Nomor Induk Karyawan</label>
                                 <input type="text" name="nik" class="form-control" id="nik">
                                 <p class="help-block" id="error-add-nik">Nomor Induk Karyawan Perlu Diisi!</p>
+                                <p class="help-block" id="error-add-duplicate-nik">Nomor Induk Karyawan Sudah ada!</p>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div id="form-add-nama" class="form-group">
                         <div class="row">
-                            <div class="col-md-7 col-xs-12">
+                            <div class="col-md-8 col-xs-12">
                                 <label for="">Nama Lengkap</label>
                                 <input type="text" name="nama" class="form-control" id="nama">
+                                <p class="help-block" id="error-add-nama">Nomor Lengkap Perlu Diisi!</p>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div id="form-add-jabatan" class="form-group">
                         <div class="row">
                             <div class="col-md-8 col-xs-12">
                                 <label for="">Jabatan</label>
                                 <input type="text" name="jabatan" class="form-control" id="jabatan">
+                                <p class="help-block" id="error-add-jabatan">Nomor Lengkap Perlu Diisi!</p>
                             </div>
                         </div>
                     </div>
@@ -187,6 +190,9 @@
 
     <script>
         $("#error-add-nik").hide("true");
+        $("#error-add-nama").hide("true");
+        $("#error-add-jabatan").hide("true");
+        $("#error-add-duplicate-nik").hide("true");
 
         var karyawan_table = $('#karyawan-table').DataTable({
                                     serverSide: true,
@@ -259,18 +265,31 @@
                 success:function(data){
                     console.log(data);
                     if(data.status == 0){
-                      // console.log(data.errors.nama[0]);
-                      if(data.errors.nama[0] != null){
+                      if(data.errors.nik[0] != null){
                         console.log('Error');
                         $("#form-add-nik").addClass("has-error");
                         $("#error-add-nik").show("true");
                       }
+                      if(data.errors.nama[0] != null){
+                        console.log('Error');
+                        $("#form-add-nama").addClass("has-error");
+                        $("#error-add-nama").show("true");
+                      }
+                      if(data.errors.jabatan[0] != null){
+                        console.log('Error');
+                        $("#form-add-jabatan").addClass("has-error");
+                        $("#error-add-jabatan").show("true");
+                      }
+                    }else if(data.status == 2){
+                      if(data.errors == "duplicate"){
+                        $("#form-add-nik").addClass("has-error");
+                        $("#error-add-duplicate-nik").show("true");
+                      }
                     }else{
-                      console.log('Berhasil')
+                      $('#create-modal').modal('hide');
+                      alert('Data berhasil disimpan!');
+                      karyawan_table.ajax.reload();
                     }
-                    // $('#create-modal').modal('hide');
-                    // alert('Data berhasil disimpan!');
-                    // karyawan_table.ajax.reload();
                 }
             });
 

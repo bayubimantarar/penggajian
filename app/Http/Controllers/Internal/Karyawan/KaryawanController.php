@@ -63,7 +63,7 @@ class KaryawanController extends Controller
           $checkdata = Karyawan::where('nik', '=', $nik)->first();
 
           if(!empty($checkdata)){
-            return response()->json(['status' => 0, 'errors' => 'NIK is duplicate!'], 200);
+            return response()->json(['status' => 2, 'errors' => 'duplicate'], 200);
           }else{
             $data = [
                         'nik'       => $nik,
