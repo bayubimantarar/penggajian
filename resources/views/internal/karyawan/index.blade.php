@@ -56,11 +56,12 @@
             <form id="modal-form">
                 <div class="modal-body">
                     {{ csrf_field() }}
-                    <div class="form-group" data-toggle="validator">
+                    <div id="form-add-nik" class="form-group">
                         <div class="row">
                             <div class="col-md-5 col-xs-12">
                                 <label for="">Nomor Induk Karyawan</label>
                                 <input type="text" name="nik" class="form-control" id="nik">
+                                <p class="help-block" id="error-add-nik">Nomor Induk Karyawan Perlu Diisi!</p>
                             </div>
                         </div>
                     </div>
@@ -82,8 +83,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary store_button">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary store_button">Simpan</button>
                 </div>
             </form>
             </div>
@@ -105,7 +106,7 @@
             <form id="edit-modal-form">
                 <div class="modal-body">
                     {{ csrf_field() }}
-                    <div class="form-group" data-toggle="validator">
+                    <div class="form-group">
                         <div class="row">
                             <div class="col-md-5 col-xs-12">
                                 <label for="">Nomor Induk Karyawan</label>
@@ -132,8 +133,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary update_button">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary update_button">Simpan</button>
                 </div>
             </form>
             </div>
@@ -185,6 +186,8 @@
     <script src="{{ asset('assets/vendor/datatables-responsive/dataTables.responsive.js') }}"></script>
 
     <script>
+        $("#error-add-nik").hide("true");
+
         var karyawan_table = $('#karyawan-table').DataTable({
                                     serverSide: true,
                                     processing: true,
@@ -255,9 +258,19 @@
                 dataType: "json",
                 success:function(data){
                     console.log(data);
-                    $('#create-modal').modal('hide');
-                    alert('Data berhasil disimpan!');
-                    karyawan_table.ajax.reload();
+                    if(data.status == 0){
+                      // console.log(data.errors.nama[0]);
+                      if(data.errors.nama[0] != null){
+                        console.log('Error');
+                        $("#form-add-nik").addClass("has-error");
+                        $("#error-add-nik").show("true");
+                      }
+                    }else{
+                      console.log('Berhasil')
+                    }
+                    // $('#create-modal').modal('hide');
+                    // alert('Data berhasil disimpan!');
+                    // karyawan_table.ajax.reload();
                 }
             });
 

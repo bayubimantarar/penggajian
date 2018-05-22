@@ -77,7 +77,7 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-6">
-                                    <label for="">File spreadsheet gaji <b><small>(data_gaji.xlsx)</small></b></label>
+                                    <label for="">File spreadsheet gaji <b style="color:red"><small>(data_gaji.xlsx)</small></b></label>
                                     <input type="file" name="excel_gaji" id="excel_gaji" />
                                     <input type="hidden" name="temp_excel_gaji" id="temp_excel_gaji" />
                                 </div>
@@ -86,7 +86,7 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-xs-6">
-                                    <label for="">File spreadsheet absensi <b><small>(data_absensi.xlsx)</small></b></label>
+                                    <label for="">File spreadsheet absensi <b style="color:red"><small>(data_absensi.xlsx)</small></b></label>
                                     <input type="file" name="excel_rekap_absensi" id="excel_rekap_absensi" />
                                     <input type="hidden" name="temp_excel_rekap_absensi" id="temp_excel_rekap_absensi" />
                                 </div>

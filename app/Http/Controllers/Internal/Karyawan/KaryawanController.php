@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Internal\Karyawan;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Karyawan;
 use DataTables;
+use Validator;
 use PDF;
 
 class KaryawanController extends Controller
@@ -38,21 +39,44 @@ class KaryawanController extends Controller
      */
     public function store(Request $request)
     {
-        $nik        = $request->nik;
-        $nama       = $request->nama;
-        $jabatan    = $request->jabatan;
-        $password   = bcrypt($nik);
+        $rules = [
+            'nik'     => 'required',
+            'nama'    => 'required',
+            'jabatan' => 'required'
+        ];
 
-        $data = [
-                    'nik'       => $nik,
-                    'nama'      => $nama,
-                    'jabatan'   => $jabatan,
-                    'password'  => $password
-                ];
+        $messages = [
+          'nik.required'  => 'Nomor Induk Karyawan (NIK) perlu diisi!',
+          'nama.required' => 'Nama Lengkap perlu diisi!',
+        ];
 
-        $query = Karyawan::StoreDataKaryawan($data);
+        $validation = Validator::make($request->all(), $rules, $messages);
 
-        return response()->json(200);
+        if($validation->fails()){
+          return response()->json(['status' => 0, 'errors' => $validation->errors()], 200);
+        }else{
+          $nik        = $request->nik;
+          $nama       = $request->nama;
+          $jabatan    = $request->jabatan;
+          $password   = bcrypt($nik);
+
+          $checkdata = Karyawan::where('nik', '=', $nik)->first();
+
+          if(!empty($checkdata)){
+            return response()->json(['status' => 0, 'errors' => 'NIK is duplicate!'], 200);
+          }else{
+            $data = [
+                        'nik'       => $nik,
+                        'nama'      => $nama,
+                        'jabatan'   => $jabatan,
+                        'password'  => $password
+                    ];
+
+            $query = Karyawan::StoreDataKaryawan($data);
+
+            return response()->json(['status' => 1], 200);
+          }
+        }
     }
 
     /**
