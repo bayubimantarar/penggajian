@@ -56,34 +56,38 @@
             <form id="modal-form">
                 <div class="modal-body">
                     {{ csrf_field() }}
-                    <div class="form-group">
+                    <div id="form-add-nama" class="form-group">
                         <div class="row">
                             <div class="col-md-7 col-xs-12">
                                 <label for="">Nama Lengkap</label>
                                 <input type="text" name="nama" class="form-control" id="nama">
+                                <p class="help-block" id="error-add-nama">Nama Pengguna Perlu Diisi!</p>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div id="form-add-email" class="form-group">
                         <div class="row">
                             <div class="col-md-8 col-xs-12">
                                 <label for="">Email</label>
                                 <input type="text" name="email" class="form-control" id="email">
+                                <p class="help-block" id="error-add-email">Email Karyawan Perlu Diisi!</p>
+                                <p class="help-block" id="error-add-duplicate-email">Email Sudah ada!</p>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div id="form-add-password" class="form-group">
                         <div class="row">
                             <div class="col-md-8 col-xs-12">
                                 <label for="">Kata Sandi</label>
                                 <input type="password" name="password" class="form-control" id="password">
+                                <p class="help-block" id="error-add-password">Password Perlu Diisi!</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary store_button">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary store_button">Simpan</button>
                 </div>
             </form>
             </div>
@@ -132,8 +136,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary update_button">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary update_button">Simpan</button>
                 </div>
             </form>
             </div>
@@ -185,6 +189,10 @@
     <script src="{{ asset('assets/vendor/datatables-responsive/dataTables.responsive.js') }}"></script>
 
     <script>
+        $("#error-add-nama").hide("true");
+        $("#error-add-email").hide("true");
+        $("#error-add-password").hide("true");
+        $("#error-add-duplicate-email").hide("true");
         var pengguna_table = $('#pengguna-table').DataTable({
                                     serverSide: true,
                                     processing: true,
@@ -238,9 +246,35 @@
                 dataType: "json",
                 success:function(data){
                     console.log(data);
-                    $('#create-modal').modal('hide');
-                    alert('Data berhasil disimpan!');
-                    pengguna_table.ajax.reload();
+                    if(data.status == 0){
+                      if(data.errors.nama[0] != null){
+                        console.log('Error');
+                        $("#form-add-nama").addClass("has-error");
+                        $("#error-add-nama").show("true");
+                      }
+                      if(data.errors.email[0] != null){
+                        console.log('Error');
+                        $("#form-add-email").addClass("has-error");
+                        $("#error-add-email").show("true");
+                      }
+                      if(data.errors.password[0] != null){
+                        console.log('Error');
+                        $("#form-add-password").addClass("has-error");
+                        $("#error-add-password").show("true");
+                      }
+                    }else if(data.status == 2){
+                      if(data.errors == "duplicate"){
+                        $("#form-add-email").addClass("has-error");
+                        $("#error-add-duplicate-email").show("true");
+                      }
+                    }else{
+                      $('#create-modal').modal('hide');
+                      alert('Data berhasil disimpan!');
+                      pengguna_table.ajax.reload();
+                    }
+                    // $('#create-modal').modal('hide');
+                    // alert('Data berhasil disimpan!');
+                    // pengguna_table.ajax.reload();
                 }
             });
 

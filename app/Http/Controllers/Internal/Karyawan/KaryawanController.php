@@ -46,8 +46,9 @@ class KaryawanController extends Controller
         ];
 
         $messages = [
-          'nik.required'  => 'Nomor Induk Karyawan (NIK) perlu diisi!',
-          'nama.required' => 'Nama Lengkap perlu diisi!',
+          'nik.required'      => 'Nomor Induk Karyawan (NIK) perlu diisi!',
+          'nama.required'     => 'Nama Lengkap perlu diisi!',
+          'jabatan.required'  => 'Jabatan perlu diisi!'
         ];
 
         $validation = Validator::make($request->all(), $rules, $messages);

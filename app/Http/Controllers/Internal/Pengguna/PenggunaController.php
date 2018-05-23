@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Pengguna;
 use DataTables;
+use Validator;
 
 class PenggunaController extends Controller
 {
@@ -37,20 +38,44 @@ class PenggunaController extends Controller
      */
     public function store(Request $request)
     {
-        $nama       = $request->nama;
-        $email      = $request->email;
-        $password   = bcrypt($request->password);
+        $rules = [
+            'nama'        => 'required',
+            'email'       => 'required',
+            'password'    => 'required'
+        ];
 
-        $data = [
-                    'nama'      => $nama,
-                    'email'     => $email,
-                    'password'  => $password
-                ];
+        $messages = [
+          'nama.required'     => 'Nama Pengguna perlu diisi!',
+          'email.required'    => 'Email perlu diisi!',
+          'password.required' => 'Password perlu diisi!'
+        ];
 
-        $query = Pengguna::StoreDataPengguna($data);
+        $validation = Validator::make($request->all(), $rules, $messages);
 
-        return response()->json(200);
+        if($validation->fails()){
+          return response()->json(['status' => 0, 'errors' => $validation->errors()], 200);
+        }else{
+          $email      = $request->email;
 
+          $checkdata  = Pengguna::where('email', '=', $email)->first();
+          if(!empty($checkdata)){
+            return response()->json(['status' => 2, 'errors' => 'duplicate'], 200);
+          }else{
+            $nama       = $request->nama;
+            $email      = $request->email;
+            $password   = bcrypt($request->password);
+
+            $data = [
+                        'nama'      => $nama,
+                        'email'     => $email,
+                        'password'  => $password
+                    ];
+
+            $query = Pengguna::StoreDataPengguna($data);
+
+            return response()->json(['status' => 1], 200);
+          }
+        }
     }
 
     /**
